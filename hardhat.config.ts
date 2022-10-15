@@ -76,7 +76,7 @@ const config: HardhatUserConfig = {
     },
     goerli: {
       url: node_url('goerli'),
-      accounts: accounts('goerli'),
+      accounts: [`${process.env.PRIVATE_KEY}`],
     },
     polygon: {
       url: node_url('polygon'),
@@ -93,7 +93,7 @@ const config: HardhatUserConfig = {
   }),
 
   paths: {
-    sources: 'src',
+    sources: 'contracts',
   },
 
   gasReporter: {
