@@ -8,19 +8,9 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   const { deployer } = await getNamedAccounts()
 
-  const steak = await ethers.getContractAt(
-    'SteakToken',
-    (
-      await deployments.get('SteakToken')
-    ).address
-  )
+  const steak = await ethers.getContract('SteakToken')
 
-  const cookedSteak = await ethers.getContractAt(
-    'CookedSteakToken',
-    (
-      await deployments.get('CookedSteakToken')
-    ).address
-  )
+  const cookedSteak = await ethers.getContract('CookedSteakToken')
   await deploy('StakingRewards', {
     from: deployer,
     args: [steak.address, cookedSteak.address, 'Staked SteakToken', 'sSteak'],

@@ -2,16 +2,10 @@ import hre from 'hardhat'
 import { StakingRewards } from '../typechain'
 
 const main = async () => {
-  const deployer = (await hre.ethers.getSigners())[0]
-  const staking: StakingRewards = await hre.ethers.getContractAt(
-    'StakingRewards',
-    (
-      await hre.deployments.get('StakingRewards')
-    ).address,
-    deployer
-  )
-
-  await staking.setRewardRate(process.argv[2])
+  const rewardRate = process.argv[2]
+  if (!rewardRate) throw new Error('Please specify a reward rate')
+  const staking: StakingRewards = await hre.ethers.getContract('StakingRewards')
+  await staking.setRewardRate(rewardRate)
 }
 
 main()

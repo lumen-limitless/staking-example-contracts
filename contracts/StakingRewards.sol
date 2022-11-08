@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -180,7 +180,7 @@ contract StakingRewards is Ownable, ReentrancyGuard {
                 tokenAddress != address(rewardToken),
             "Cannot withdraw staking/reward token"
         );
-        IERC20(tokenAddress).transfer(msg.sender, tokenAmount);
+        require(IERC20(tokenAddress).transfer(msg.sender, tokenAmount));
         emit Recovered(tokenAddress, tokenAmount);
     }
 
