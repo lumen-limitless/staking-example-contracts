@@ -10,7 +10,6 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   await deploy('CookedSteakToken', {
     from: deployer,
     args: [],
-    skipIfAlreadyDeployed: true,
     proxy: false,
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks

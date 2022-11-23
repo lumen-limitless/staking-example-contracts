@@ -11,7 +11,6 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   await deploy('SteakToken', {
     from: deployer,
     args: [parseUnits('1000000000')],
-    skipIfAlreadyDeployed: true,
     proxy: false,
     log: true,
     autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks

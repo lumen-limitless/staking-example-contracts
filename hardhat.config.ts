@@ -109,18 +109,6 @@ const config: HardhatUserConfig = {
     target: 'ethers-v5',
   },
 
-  etherscan: {
-    apiKey: {
-      mainnet: process.env.SCAN_API_KEY_MAINNET || '',
-      goerli: process.env.SCAN_API_KEY_GOERLI || '',
-      optimisticEthereum: process.env.SCAN_API_KEY_OPTIMISM || '',
-      arbitrumOne: process.env.SCAN_API_KEY_ARBITRUM || '',
-      polygon: process.env.SCAN_API_KEY_POLYGON || '',
-      bsc: process.env.SCAN_API_KEY_BSC || '',
-      avalanche: process.env.SCAN_API_KEY_AVALANCHE || '',
-    },
-  },
-
   external: process.env.HARDHAT_FORK
     ? {
         deployments: {
