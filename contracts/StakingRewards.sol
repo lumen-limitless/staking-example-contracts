@@ -14,7 +14,7 @@ contract StakingRewards is Ownable, ReentrancyGuard {
 
     /* ========== STATE VARIABLES ========== */
     address public immutable stakingToken;
-    address public rewardToken;
+    address public immutable rewardToken;
 
     string public name;
     string public symbol;
@@ -95,73 +95,74 @@ contract StakingRewards is Ownable, ReentrancyGuard {
     /* ========== FUNCTIONS ========== */
 
     function exit() external {
-        withdraw(_balances[msg.sender]);
+        withdraw(_balances[_msgSender()]);
         getReward();
     }
 
-    function getReward() public nonReentrant updateReward(msg.sender) {
-        uint reward = rewards[msg.sender];
+    function getReward() public nonReentrant updateReward(_msgSender()) {
+        uint reward = rewards[_msgSender()];
         if (reward > 0) {
-            rewards[msg.sender] = 0;
-            CookedSteakToken(rewardToken).mint(reward, msg.sender);
-            emit RewardPaid(msg.sender, reward);
+            rewards[_msgSender()] = 0;
+            CookedSteakToken(rewardToken).mint(reward, _msgSender());
+            emit RewardPaid(_msgSender(), reward);
         }
     }
 
-    function stake(uint amount) external nonReentrant updateReward(msg.sender) {
+    function stake(
+        uint amount
+    ) external nonReentrant updateReward(_msgSender()) {
         require(amount > 0, "Cannot stake 0");
         require(!paused, "Staking is currently disabled");
         totalSupply += amount;
-        _balances[msg.sender] += amount;
+        _balances[_msgSender()] += amount;
         IERC20(stakingToken).safeTransferFrom(
-            msg.sender,
+            _msgSender(),
             address(this),
             amount
         );
 
-        emit Staked(msg.sender, amount);
+        emit Staked(_msgSender(), amount);
     }
 
     function stakeWithPermit(
         uint amount,
+        uint deadline,
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external nonReentrant updateReward(msg.sender) {
+    ) external nonReentrant updateReward(_msgSender()) {
         require(amount > 0, "Cannot stake 0");
         require(!paused, "Staking is currently disabled");
 
         totalSupply += amount;
-        _balances[msg.sender] += amount;
+        _balances[_msgSender()] += amount;
         IERC20Permit(stakingToken).safePermit(
-            msg.sender,
+            _msgSender(),
             address(this),
-            type(uint).max,
-            type(uint).max,
+            amount,
+            deadline,
             v,
             r,
             s
         );
         IERC20(stakingToken).safeTransferFrom(
-            msg.sender,
+            _msgSender(),
             address(this),
             amount
         );
 
-        emit Staked(msg.sender, amount);
+        emit Staked(_msgSender(), amount);
     }
 
-    function withdraw(uint amount)
-        public
-        nonReentrant
-        updateReward(msg.sender)
-    {
+    function withdraw(
+        uint amount
+    ) public nonReentrant updateReward(_msgSender()) {
         require(amount > 0, "Cannot withdraw 0");
         totalSupply -= amount;
-        _balances[msg.sender] -= amount;
-        IERC20(stakingToken).safeTransfer(msg.sender, amount);
+        _balances[_msgSender()] -= amount;
+        IERC20(stakingToken).safeTransfer(_msgSender(), amount);
 
-        emit Withdrawn(msg.sender, amount);
+        emit Withdrawn(_msgSender(), amount);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -171,24 +172,22 @@ contract StakingRewards is Ownable, ReentrancyGuard {
     }
 
     // recover wrong tokens
-    function recoverERC20(address tokenAddress, uint tokenAmount)
-        external
-        onlyOwner
-    {
+    function recoverERC20(
+        address tokenAddress,
+        uint tokenAmount
+    ) external onlyOwner {
         require(
             tokenAddress != address(stakingToken) &&
                 tokenAddress != address(rewardToken),
             "Cannot withdraw staking/reward token"
         );
-        require(IERC20(tokenAddress).transfer(msg.sender, tokenAmount));
+        require(IERC20(tokenAddress).transfer(_msgSender(), tokenAmount));
         emit Recovered(tokenAddress, tokenAmount);
     }
 
-    function setRewardRate(uint rate)
-        external
-        onlyOwner
-        updateReward(address(0))
-    {
+    function setRewardRate(
+        uint rate
+    ) external onlyOwner updateReward(address(0)) {
         rewardRate = rate;
         emit RewardRateSet(rewardRate);
     }

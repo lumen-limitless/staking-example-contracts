@@ -340,7 +340,7 @@
       ]
     },
     "StakingRewards": {
-      "address": "0xa0707E99E254c9A53040499E15C6f838438203B9",
+      "address": "0x49e02B094689238379761004Eb6ec5f51ecaCa84",
       "abi": [
         {
           "inputs": [
@@ -765,6 +765,11 @@
             {
               "internalType": "uint256",
               "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
               "type": "uint256"
             },
             {

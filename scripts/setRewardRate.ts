@@ -1,9 +1,8 @@
-import { parseUnits } from 'ethers/lib/utils'
 import hre from 'hardhat'
 import { StakingRewards } from '../typechain'
 
 const main = async () => {
-  const rewardRate = parseUnits(process.argv[2])
+  const rewardRate = process.argv[2]
   if (!rewardRate) throw new Error('Please specify a reward rate')
   const staking: StakingRewards = await hre.ethers.getContract('StakingRewards')
   console.log(

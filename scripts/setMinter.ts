@@ -6,7 +6,8 @@ const main = async () => {
     'CookedSteakToken'
   )
   const stakingAddress = (await hre.deployments.get('StakingRewards')).address
-  await token.setMinter(stakingAddress)
+  const tx = await token.setMinter(stakingAddress)
+  await tx.wait()
 }
 
 main()
